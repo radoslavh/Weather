@@ -11,7 +11,7 @@ import CoreLocation
 import Alamofire
 import SwiftyJSON
 
-class WeatherController: UIViewController, CLLocationManagerDelegate {
+class WeatherController: UIViewController, CLLocationManagerDelegate, ChangeCityDelegate {
     
     let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
     let APP_ID = "e72ca729af228beabd5d20e3b7749713"
@@ -30,6 +30,13 @@ class WeatherController: UIViewController, CLLocationManagerDelegate {
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "changeCityName" {
+            let nextVC = segue.destination as! CityViewController
+            nextVC.listener = self
+        }
     }
     
     func getWeatherData(url: String, parameters: [String: String]) {
@@ -57,7 +64,6 @@ class WeatherController: UIViewController, CLLocationManagerDelegate {
             let params : [String:String] = ["lat" : latitude, "lon" : longitude, "appid" : APP_ID]
             
             getWeatherData(url: WEATHER_URL, parameters: params)
-            
         }
     }
     
@@ -83,6 +89,11 @@ class WeatherController: UIViewController, CLLocationManagerDelegate {
         self.temperatureLabel.text = "\(weatherDataMode.temperature)°"
         self.cityLabel.text = "\(weatherDataMode.city)"
         self.weatherImageView.image = UIImage(named: weatherDataMode.weatherConditionIcon)
+    }
+    
+    func onChangeCityAction(cityName: String) {
+        let params : [String:String] = ["q" : cityName, "appid" : APP_ID]
+        getWeatherData(url: WEATHER_URL, parameters: params)
     }
 }
 

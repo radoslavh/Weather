@@ -8,24 +8,31 @@
 
 import UIKit
 
+protocol ChangeCityDelegate {
+    func onChangeCityAction(cityName: String)
+}
+
 class CityViewController: UIViewController {
 
     @IBOutlet weak var cityLabel: UITextField!
+    
+    var listener: ChangeCityDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     @IBAction func getCityTapped(_ sender: Any) {
-        //1 Get the city name the user entered in the text field
-        
-        //2 If we have a delegate set, call the method userEnteredANewCityName
-        
-        //3 dismiss the Change City View Controller to go back to the WeatherViewController
-        
+        let city = cityLabel.text!
+        listener?.onChangeCityAction(cityName: city)
+        dismiss()
     }
     
     @IBAction func backTapped(_ sender: Any) {
+        dismiss()
+    }
+    
+    func dismiss() {
         self.dismiss(animated: true, completion: nil)
     }
 }
